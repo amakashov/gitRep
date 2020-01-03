@@ -1,0 +1,38 @@
+\documentclass{report}
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\title{Разностные уравнения и D-преобразование}
+\author{Алексей Макашов}
+\date{2019}
+\begin{document}
+    \maketitle
+    \tableofcontents
+
+    \chapter{Дискретное преобразование Лапласа и $Z$-преобразование}
+
+    \chapter{Преобразование $\bar{D}$ и $\bar{Z}$}
+
+    Для установления связи между непрерывным и дискретным преобразованием 
+    Лапласа
+    воспользуемся определением дискретной функции. Итак, пусть $x_T(t)$ - 
+    непрерывная функция. Выполним замену переменной и обозначим $t=\tau T$ и
+    обозначим $x(\tau)=x_T(T\tau)$. Пусть, кроме того, для непрерывной функции
+    $x(\tau)$ существует изображение по Лапласу:
+
+    \begin{equation}[laplace_direct]
+        X(p)=L\{x(\tau)\} = \int_0^{\infty} e^{-p\tau}x(\tau) d\tau
+    \end{equation}
+     
+Перейдём к дискретной функции смещённого аргумента. Для этого, как было показано в ???,
+перейдём к переменным $n, \varepsilon$ так, что
+
+\begin{equation}[discrFunc]
+    x[n,\varepsilon]= x(\tau)|_{\tau=n+\varepsilon}, \quad 0\leq\varepsilon\le  1
+\end{equation}
+и запишем дискретное преобразование Лапласа:
+\begin{equation}\label{lapDiscrete}
+    X^*(q,\varepsilon)=\sum_{n=0}^{\infty} e^{-nq}x[n,\varepsilon]
+\end{equation}
+
+\end{document}
