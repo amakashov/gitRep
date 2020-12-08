@@ -1,38 +1,457 @@
-\documentclass{report}
+\documentclass[12pt,twoside]{report}
 \usepackage[T2A]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage[russian]{babel}
+\usepackage[english,russian]{babel}
+\usepackage{amsgen,amssymb,amsmath, mathtext}
+% \usepackage{cite,enumerate,float,indentfirst}
+%\usepackage[dvips]{graphicx}
+\usepackage{flexisym}
+\usepackage{breqn}
+\usepackage[standard]{ntheorem}
+\usepackage{systeme}
+
+\renewtheorem{theorem}{Теорема}
+\newtheorem{property}{Свойство}
+\makeatletter
+\newtheoremstyle{MyNonumberplain}%
+  {\item[\theorem@headerfont\hskip\labelsep ##1\theorem@separator]}%
+  {\item[\theorem@headerfont\hskip\labelsep ##3\theorem@separator]}
+\makeatother
+\theoremstyle{MyNonumberplain}
+\theorembodyfont{\upshape}
+\renewtheorem{proof}{Доказательство}
+
 \title{Разностные уравнения и D-преобразование}
 \author{Алексей Макашов}
 \date{2019}
 \begin{document}
     \maketitle
     \tableofcontents
+    \chapter{Разностные уравнения.}
+    \section{Дискретные функции. Понятие конечной разности и суммы.}
+    \newpage
+    \section{Разностные уравнения первого порядка.}
+    \newpage
+    \section{Линейные разностные уравнения порядка $k$.}
+    \newpage
+    \section{Стационарные Линейные разностные уравнения .}
+    \newpage
+    \section{Системы разностных уравнений.}
+    \newpage
+    \section{Решение систем стационарных разностных уравнений.}
+
+    В случае, если все функции $a_{ij}[n]$ не зависят от $n$, система разностных уравнений \ref{DifSys} принимает следующий вид:
+
+    \begin{eqnarray}\label{statDifSystem}
+        \vec{x}[n+1]=A\vec{x}[n]+\vec{f}[n]
+    \end{eqnarray}
+    
+    Здесь $A$ представляет собой константную матрицу размера $k \times k$
+    Для нахождения решения в таком случае мы попробуем сначала решить однородную систему уравнений ($\vec{f}[n]\equiv\vec{0}$).
+    Очевидно, что такая система имеет тривиальное решение$\vec{x}[n]=\vec{0}$. 
+    Будем искать решение в виде $\vec{x}[n]=\lambda^n \vec{h}$ с ограничением $\lambda\neq 0$ 
+    (в противном случае получим тривиальное решение). При подстановке такого решения в исходное уравнение получим:
+    \begin{equation*}
+        \lambda^{n+1}\vec{h} = A\vec{h}\lambda^n 
+    \end{equation*}
+    
+    Последняя система после сокращения на $\lambda^n$ может быть преобразована к виду 
+    \begin{equation}\label{sysEigenValVec}
+        \left(A - \lambda E \right)\vec{h} = \vec{0} 
+    \end{equation}
+    
+    Несложно заметить, что мы получили задачу на собственные вектора и собственные значения матрицы $А$.
+    Собственные значения могут быть найдены как решения характеристического уравнения, получаемого 
+    из условия равенства нулю определителя $\left|A-\lambda E\right|$.
+    После этого собственные вектора ищутся для конкретных значений $\lambda$.
+
+    Как можно заметить, для матрицы размера $k \times k$ мы можем найти не более $k$ попарно различных 
+    собственных значений. При этом, если все собственные значения попарно различны, им соответствует $k$
+    различный собственных векторов. Как мы показали ранее, фундаментальная система решений системы 
+    разностных уравнений порядка $k$ представляет собой набор из $k$ линейно-независимых частных решений.
+    Таким образом, если все найденные собственные значения попарно различны, то система функций 
+    $\vec{\phi}_i[n]=\lambda_i^n \vec{h}$ является фундаментальной системой решений, а общее решение может 
+    быть записано как
+    \begin{equation}
+        \vec{x}_{o.o.}[n]=C_1\lambda_1^n\vec{h_1}+C_2\lambda_2^n\vec{h_2}+\dots+C_k\lambda_k^n\vec{h_k}
+    \end{equation}
+    
+    Заметим, что собственные значения $\lambda_i$ могут быть, вообще говоря, комплексными.
+
+    \begin{example}{Пример}
+        
+    % \textbf{\textit{Пример.}} 
+    Найдём решение следующей системы уравнений:
+    \begin{equation*}
+        \begin{cases}
+            x_1[n+1]= -5x_1[n]-2x_2[n]-2x_3[n]\\
+            x_2[n+1]= 10x_1[n]+4x_2[n]+2x_3[n]\\
+            x_3[n+1]= 2x_1[n]+x_2[n]-3x_3[n]
+        \end{cases}
+    \end{equation*}
+
+    Матрица системы имеет вид
+    \[
+        A=\left(
+            \begin{array}{ccc}
+                -5 &-2 &-2\\
+                10 &4 &2\\
+                2 &1 &3
+            \end{array}
+        \right)
+    \]
+    Характеристическое уравнение составляется из условия равенства нулю определителя
+    \[
+        \left|
+            \begin{array}{ccc}
+                -5-\lambda&-2 &-2\\
+                10 &4-\lambda &2\\
+                2 &1 &3-\lambda
+            \end{array}
+        \right|
+    \]
+    \end{example}
+
+
 
     \chapter{Дискретное преобразование Лапласа и $Z$-преобразование}
+    \section{Определения дискретных $D$ и $\mathcal{Z}$ преобразований}
+        Давайте вспомним, что такое преобразование Лапласа для непрерывной функции. Преобразование определяется формулой
+        \begin{equation}\label{Lapl}
+            X(p)=L(x(t))=\int_0^{+\infty} x(\tau) e^{-p\tau} d\tau
+        \end{equation}
+        \begin{itemize}
+            \item При этом найти изображение по Лапласу можно не для всякой функции. Она должна удовлетворять 2 условиям:
+            \item $x(t) \equiv 0$ при $t < 0$;
+            \item Функция должна расти не быстрее экспоненты $|x(t)| \le M\cdot e^{s_0 t}, M,s_0=const$
+        \end{itemize}
+
+        Такое преобразование обладает рядом свойств, связанных с дифференцированием и интегрированием оригинала и используется
+        для превращения дифференциальных уравнений в алгебраические.
+
+        Введём понятие дискретных функций оригиналов. Для этого заметим, что, если наша функция $x(t)$ определена только в 
+        конечном количестве точек $t=nT, n=0,1,\dots$, то в этом случае интеграл \eqref{Lapl} превращается в сумму следующего вида:
+        \begin{equation*}
+            X(p)=\sum_{n=0}^{+\infty} x(nT) \cdot e^{-npT}
+        \end{equation*}
+        и, полагая $x[n]=x(nT)$, получим формулу для \textit{дискретного преобразования Лапласа} :
+        \begin{equation}\label{DiskrD}
+            X^*(q)=\sum_{n=0}^{+\infty} x[n] \cdot e^{-nq}
+        \end{equation}
+        При этом переменная $q = \sigma + i\omega$ является комплексной.
+    
+        Очевидно, что для функции  $x[n]$ существуют аналогичные требования к функции-оригиналу, связанные со сходимостью
+        полученной суммы:
+        \begin{itemize}
+            \item $x[n] \equiv 0$ при $n < 0$;
+            \item $|x[n]| < M_0\cdot e^{\sigma_0 n}, M_0,\sigma_0=const, \forall n \ge 0$
+        \end{itemize}
+        В дальнейшем мы будем рассматривать функции вида $\bar{f}[n] = f[n]\cdot\eta[n]$, где
+        \begin{equation*}
+            \eta[n]=\left\{
+            \begin{split}
+                &1, &n \geq 0,\\
+                &0, &n < 0;
+            \end{split}
+            \right.
+        \end{equation*}
+        
+        Мы будем в дальнейшем обозначать такое преобразование
+        \begin{equation*}
+            X^*(q) = D(x[n])
+        \end{equation*}
+        Аналогично вводится преобразование для \textit{смещённой функции}:
+        \begin{equation*}
+            X^*(q,\varepsilon) = D(x[n,\varepsilon])=\sum_{n=0}^{+\infty} x[n,\varepsilon] \cdot e^{-nq}
+        \end{equation*}
+    
+        \begin{theorem}
+            Функция $X^*(q)$ определена в полуплоскости $Re(q)>\sigma_0$ и является в ней \textit{аналитической}
+        \end{theorem}
+        \begin{proof}
+            Функция-изображение определена в случае сходимости ряда:            
+            \begin{equation*}
+                \left| \sum_{n=0}^{+\infty} x[n] \cdot e^{-nq}\right| \leq \sum_0^{+\infty}M_0e^{\sigma_0 n} \cdot e^{-n\sigma} =
+                M_0 \sum_{n=0}^{+\infty}e^{-(\sigma - \sigma_0)n}=\frac{M_0e^\sigma}{e^{\sigma}-e^{\sigma_0}}
+            \end{equation*}
+            Для доказательства возможности почленного дифференцирования рассмотрим ряд, составленный
+            из производных отдельных компонентов
+            \begin{eqnarray*}
+                \left|\left(\sum_{n=0}^{+\infty} x[n] \cdot e^{-nq}\right)^{'}\right| 
+                \leq \sum_{n=0}^{+\infty} n |x[n]| \cdot e^{-nq}
+                \leq \sum_{n=0}^{+\infty}M_0ne^{\sigma_0 n} \cdot e^{-n\sigma} =\\
+                =M_0 \sum_{n=0}^{+\infty}e^{-(\sigma - \sigma'_0)n}=\frac{M_0e^\sigma}{e^{\sigma}-e^{\sigma'_0}}                   
+            \end{eqnarray*}
+            Здесь $\sigma'_0 = \sigma_0+\alpha$, $\alpha$ - произвольное малое число. Ряд сходится, следовательно, существует
+            производная $\frac{dX^*(q)}{dq}$. $\blacksquare$            
+        \end{proof}
+            % \end{proof}
+
+    
+        % \begin{frame}{$Z$-преобразование}
+            С практической точки зрения часто более удобным является использование вместо
+            дискретного преобразования Лапласа $Z$-преобразования, которое получается
+            простой заменой $z=e^q, q=ln(z)$:
+            \begin{equation}\label{Ztransform}
+                X^*(z)= \mathcal{Z}(x[n])=\sum_{n=0}^{+\infty} x[n] \cdot z^{-n}
+            \end{equation}
+            Аналогично вводится изображение смещённой функции:
+            \begin{equation*}
+                X^*(z,\varepsilon)=\mathcal{Z}(x[n,\varepsilon])=\sum_{n=0}^{+\infty} x[n,\varepsilon] \cdot z^{-n}
+            \end{equation*}
+            В дальнейшем мы будем говорить, в основном, о $Z$-преобразовании.
+        % \end{frame}
+    
+        % \begin{frame}{Примеры}
+            Попробуем найти изображения некоторых функций:
+            \begin{eqnarray*}
+                \begin{split}
+                    &x[n] = 1[n];\quad &X^*(q)=\sum^{+\infty}_{n=0} e^{-qn}=\frac{1}{1-\frac{1}{e^q}}=\frac{e^q}{e^q-1};
+                    \quad &X(z)=\frac{z}{z-1}\\
+                    &x[n] = a^n;\quad &X^*(q)=\sum^{+\infty}_{n=0} a^ne^{-qn}=\frac{1}{1-\frac{a}{e^q}}=\frac{e^q}{e^q-a};
+                    \quad &X(z)=\frac{z}{z-a}\\
+                    &x[n] = a^{n^2};\quad &\textit{не оригинал}\quad&
+                \end{split}
+            \end{eqnarray*}
+        % \end{frame}
+    
+        % \begin{frame}{Единственность изображения}
+            \begin{theorem}
+                Если $x[n]$ является оригиналом, что существует единственное изображение
+                $X^*(q)$
+            \end{theorem}
+            \begin{proof}
+                Пусть для $x[n]$ существует два различных изображения - $X^*_1(q)$ и $X^*_2(q)$.
+                Тогда 
+                \begin{equation}
+                    X^*(q)=X^*_1(q)-X^*_2(q) = \sum_{n=0}^{\infty}e^{-qn}x[n]-\sum_{n=0}^{\infty}e^{-qn}x[n] \equiv 0
+                \end{equation}
+                то есть $X^*_1(q) \equiv X^*_2(q) \quad \forall n \in [0,1,2,\dots] \blacksquare$
+            \end{proof}
+            Для $Z$-преобразования теорема доказывается аналогично.
+        % \end{frame}
+    
+        % \begin{frame}{Обратное преобразование}
+            Аналогично интегральному преобразованию, оригинал для дискретного ищется через отыскание  интеграла по контуру,
+            причём от $Z$-преобразования:
+            \begin{equation}
+                x[n]=\frac{1}{2\pi i}\oint X(z)z^{n-1}dz=\left.\sum_i Res(X(z)z^{n-1})\right|_{z=z_i}
+            \end{equation}
+            Вычеты вычисляются по всем полюсам функции $X(i)$. При этом вычет в каждой точке вычисляется по формуле
+            \begin{equation}
+                \left.Res(X(z)z^{n-1})\right|_{z=z_i}=\left.\lim_{z\to z_i} \frac{d^{m-1}}{dz^{m-1}}(z-z_i)^m X(z)z^{n-1}\right|_{z=z_i}
+            \end{equation}
+            где $m$ - порядок полюса $z_i$. Если полюс имеет первый порядок, дифференцирование не производится.\\
+            % \alert<3>{В дальнейшем мы будем говорить в основном о $Z$-преобразовании.}
+        % \end{frame}
+    
+        \section{Свойства $D$ и $Z$-преобразования}
+            Большинство свойств очень похожи и могут быть получены заменой $z=e^q$\\
+
+            \begin{property}[линейность]
+                Пусть $f[n] = \alpha f_1[n] + \beta f_2[n]$, функции $f_1[n],f_2[n]$ являются оригиналами.
+                Тогда изображение\\
+                $\displaystyle F(z) = \mathcal{Z}(f[n])= \sum_{n=0}^\infty \left(\alpha f_1[n]+\beta f_2[n]\right)z^{-n}=
+                \sum_{n=0}^\infty \left(\alpha z^{-n}f_1[n]+\beta z^{-n}f_2[n]\right)=
+                \alpha\sum_{n=0}^\infty z^{-n}f_1[n]+ \beta\sum_{n=0}^\infty z^{-n}f_2[n]=\alpha F_1(z)+\beta F_2(z)$\\
+                где $F_1(z),F_2(z)$ изображения $f_1[n],f_2[n]$ соответственно.
+            \end{property}
+            Это свойство позволяет вычислять изображения сумм уже известных нам функций.
+            \begin{example}
+                $\mathcal{Z}(2^n+4\cdot 3^n)= \mathcal{Z}(2^n)+4\mathcal{Z}(3^n) = \frac{z}{z-2} + \frac{4z}{z-3}$
+            \end{example}
+        % \begin{frame}{Изображения тригонометрических функций}
+            % \begin{exampleblock}{Изображение синуса}
+            Воспользовавшись этим несложным свойством, можно вычислить изображение тригонометрических функций
+                \begin{equation*}
+                    \begin{split}
+                        \mathcal{Z}(a^n \sin(\varphi n))=\sum_{n=0}^\infty a^n \sin(\varphi n) z^{-n}=
+                        \sum_{n=0}^\infty \left(\frac{a}{z}\right)^n \left(\frac{e^{i\varphi n}-e^{-i\varphi n}}{2i}\right)=\\
+                        =\frac{1}{2i}\left( \sum_{n=0}^\infty \left(\frac{ae^{i\varphi}}{z}\right)^n - \sum_{n=0}^\infty \left(\frac{ae^{-i\varphi}}{z}\right)^n\right)=
+                        \frac{1}{2i}\left(\frac{z}{z-ae^{i\varphi}} - \frac{z}{z-ae^{-i\varphi}}\right)=\\
+                        =\frac{1}{2i}\left( \frac{z\left(z-ae^{-i\varphi}\right) - z\left(z-ae^{i\varphi}\right)}{z^2-az(e^{i\varphi}+e^{-i\varphi})+a^2} \right)=
+                        \frac{1}{2i}\frac{az(e^{i\varphi}-e^{-i\varphi})}{z^2 + 2az\cos\varphi + a^2}=
+                        \frac{az\sin\varphi}{z^2+2az\cos\varphi+a^2}
+                    \end{split}
+                \end{equation*}
+            % \end{exampleblock}
+            % \begin{alertblock}<2>{Изображение косинуса}
+                Покажите самостоятельно, что $\displaystyle \mathcal{Z}(\cos\varphi n)=\frac{z(z-\cos\varphi)}{z^2+2z\cos\varphi+1}$
+            % \end{alertblock}
+        % \end{frame}
+    
+        \begin{property}{растяжение - для $\mathcal{Z}$}
+            \begin{eqnarray*}
+                \mathcal{Z}(a^n f[n]) = \sum_{n=0}^\infty a^n z^{-n}f[n]=
+                \sum_{n=0}^\infty \left(\frac{z}{a}\right)^{-n}f[n]=F\left(\frac{z}{a}\right)\\
+                \mathcal{Z}(a^{-n} f[n]) = \sum_{n=0}^\infty a^{-n} z^{-n}f[n]=
+                \sum_{n=0}^\infty \left(az\right)^{-n}f[n]=F(az)
+            \end{eqnarray*}
+        \end{property}
+        \begin{example}
+            Найдём изображение $\displaystyle \mathcal{Z}(a^n\cos\varphi n)$:
+                \begin{equation*}
+                    \mathcal{Z}(a^n\cos\varphi n)=\frac{\frac{z}{a}(\frac{z}{a}-\cos\varphi)}{\left(\frac{z}{a}\right)^2+2\frac{z}{a}\cos\varphi+1}
+                    =\frac{z(z-a\cos\varphi)}{z^2+2az\cos\varphi+a^2}
+                \end{equation*}
+        \end{example}
+
+    
+        \begin{property}{cмещение аргумента (только для $D$)}
+            Аналогично предыдущему свойству, но теперь для $D$-преобразования
+            % \begin{block}{Свойство $2'$ Изменение масштаба}
+                \begin{equation*}
+                    D(e^{\mp \lambda n} f[n]) = \sum_{n=0}^\infty e^{\mp \lambda n} e^{-qn}f[n]=
+                    \sum_{n=0}^\infty e^{-(q\pm\lambda)n}f[n]=F\left(q\pm\lambda\right)
+                \end{equation*}
+            % \end{block}
+        \end{property}
+    
+        \begin{theorem}{Теорема запаздывания}
+                \begin{eqnarray*}
+                    \mathcal{Z}(f[n-k])&=&z^{-k}F(z)\\
+                    \mathcal{Z}(f[n+k])&=&z^{k}\left(F(z)- \sum_{n=0}^{k-1} z^{-n}f[n]\right)
+                \end{eqnarray*}
+        \end{theorem}
+        \begin{proof}
+            Первая утверждение доказывается следующим образом
+            \[
+                \begin{aligned}
+                    \mathcal{Z}(f[n-k])=\sum_{n=0}^\infty z^{-n}f[n-k] \\ 
+                    =\left|\begin{split}n'=n-k\\n=n'+k\end{split}\right|= 
+                    \sum_{n'=-k}^\infty z^{-(n'+k)}f[n']= \\ 
+                    =z^{-k}\sum_{n'=0}^\infty z^{-n'}f[n']=z^{-k}F(z)
+                \end{aligned}
+            \]
+            Здесь мы пользуемся первым ограничением на функцию-оригинал.
+            Второе доказывается аналогично, но несколько сложнее.
+            \[
+            \begin{aligned}
+                \mathcal{Z}(f[n+k])=\sum_{n=0}^\infty z^{-n}f[n+k]= 
+                \left|\begin{split}n'=n+k\\n=n'-k\end{split}\right|=
+                \sum_{n'=k}^\infty z^{-(n'-k)}f[n']=\\ 
+                z^{k}\sum_{n'=k}^\infty z^{-n'}f[n']=
+                z^{k}\left(\sum_{n'=0}^\infty z^{-n'}f[n']- \sum_{n'=0}^{k-1} z^{-n'}f[n']\right)= \\
+                =z^{k}\left(F(z)- \sum_{n=0}^{k-1} z^{-n}f[n]\right)\blacksquare
+            \end{aligned}
+            \]
+        \end{proof}
+
+    
+        \begin{frame}{Применеие теоремы запаздывания}
+            \begin{itemize}
+                \item <1-> Вариант с отрицательным запаздыванием для нас не слишком интересен
+                \item <2-> Использование положительного запаздывания более применимо
+                \item <3-> $\displaystyle \mathcal{Z}(f[n+1])=z\left(F(z)-\sum_{n=0}^0 z^{-n}f[n]\right)=zF(z) - z\cdot f[0]$
+            \end{itemize}
+
+            % \begin{example}
+                Изображение $\mathcal{Z}(f[n+2])$ функции $f[n]=5^n$ вычисляется как:\\
+                $\displaystyle \mathcal{Z}(f[n+2])= z^2\left(\mathcal{Z}(5^n)-\sum_{n=0}^1 z^{-n}5^n\right)=
+                z^2\left(\frac{z}{z-5} - 5^0z^0-5^1z^{-1}\right)=\frac{z^3}{z-5}-z^2-5z$
+            % \end{example}      
+        \end{frame}
+    
+        \begin{frame}{Изображения конечных разностей}
+            \begin{itemize}
+                \item <1-> Зная изображения $f[n]$ и $f[n+1]$ можно найти изображение первой разности
+                \item <2-> $\displaystyle \mathcal{Z}(f[n+1])=z\left(F(z)-\sum_{n=0}^0 z^{-n}f[n]\right)=zF(z) - z\cdot f[0]$
+                \item <3-> Изображение первой разности $\mathcal{Z}(\Delta f[n])=zF(z) - z\cdot f[0] - F(z)=(z-1)F(z) -z\cdot f[0]$
+                \item <4-> Изображение второй разности $\mathcal{Z}(\Delta^2 f[n])=zF'(z) - z\cdot f[0] - F'(z)=(z-1)F'(z) -z\cdot f[0]$
+                где $F'(z)$ - изображение первой разности
+                \item <5-> Тогда можно записать $\mathcal{Z}(\Delta^2 f[n])=(z-1)^2F(z) -z(z-1)f[0]-z\cdot\Delta f[0]$
+            \end{itemize}
+            Полученный результат можно обобщить:\\
+            % \begin{block}{Свойство 4 - изображения конечных разностей}
+                $$\mathcal{Z}(\Delta^k f[n])=(z-1)^k F(z)-z\sum_{m=0}^{k-1} (z-1)^{k-1-m} \Delta^m x[0]$$
+            % \end{block}
+        \end{frame}
+    
+        \begin{frame}{Применение изображения конечных разностей}
+            Мы знаем, что $\displaystyle \mathcal{Z}(1)=\frac{z}{z-1}$ и $\Delta(n)=1$
+            % \begin{example}
+                $$\mathcal{Z}(1)=(z-1) \mathcal{Z}(n) - z\cdot0 \Rightarrow \mathcal{Z}(n)=\frac{z}{(z-1)^2}$$
+            % \end{example}
+            % \begin{example}
+            %     $2\mathcal{Z}(n)=(z-1) \mathcal{Z}(n^2) - z\cdot0 \Rightarrow \mathcal{Z}(n)^2=\frac{2z}{(z-1)^3}$
+            % \end{example}
+            Пусть $\displaystyle y[n]=\sum_{m=0}^{n-1}x[m]$, тогда $\Delta y[n]=x[n]$ и $y[0]=0$
+            % \begin{block}{Свойство 5 - Изображение конечной суммы}
+                $$ \mathcal{Z}\left(\sum_{m=0}^{n-1}x[m]\right)=\frac{X(z)}{z-1}$$
+            % \end{block}
+        \end{frame}
+    
+        \begin{frame}{Дифференцирование изображения (для $\mathcal{Z}$)}
+            По определению $\mathcal{Z}$-преобразования
+            $$ F(z) = \sum_{n=0}^{\infty} f[n]z^{-n}$$
+            Продифференцируем обе части по $z$: 
+            \[\begin{aligned}
+                \frac{dF(z)}{dz}=\frac{d}{dz}\sum_{n=0}^{\infty} f[n]z^{-n}
+                = \sum_{n=0}^{\infty} f[n]\frac{d}{dz}z^{-n}= \\ 
+                = \sum_{n=0}^{\infty} f[n](-n)z^{-n-1}  = -\frac{1}{z}\sum_{n=0}^{\infty} f[n]nz^{-n} 
+                = -\frac{1}{z}\mathcal{Z}\left(nf[n]\right)\\ 
+                \Rightarrow \mathcal{Z}\left(nf[n]\right) = -z\frac{d}{dz}F(z)
+            \end{aligned}\]
+        \end{frame}
+    
+        % \begin{frame}{Свойство дифференцирования (для $\mathcal{Z}$)}
+            Полученный результат можно обобщить и получить
+            % \begin{block}{Свойство 6 - дифференцирование изображения}
+                $$ \mathcal{Z}\left(n^kf[n]\right) = \left(-z\frac{d}{dz}\right)^k F(z)$$
+            % \end{block}
+            % \begin{example}
+                Изображение $f[n]=n$ можно найти и дифференцированием:\\
+                $$\mathcal{Z}\left(n\right) = \left(-z\frac{d}{dz}\right)\frac{z}{z-1}=
+                -z\frac{z-1-z}{(z-1)^2}=\frac{z}{(z-1)^2}$$
+            % \end{example}
+            % \begin{example}
+                $$\mathcal{Z}\left(n^2\right) = \left(-z\frac{d}{dz}\right)^2\frac{z}{z-1}=
+                \left(-z\frac{d}{dz}\right)\frac{z}{(z-1)^2}=z\frac{z+1}{(z-1)^3}$$
+            % \end{example}
+        %  \end{frame}
+    
+        %  \begin{frame}{Свойство дифференцирования (для $\mathcal{D}$)}
+            Аналогичное свойство есть и для $D$-преобразования
+            % \begin{block}{Свойство 6' - дифференцирование изображения}
+                $$ \mathcal{D}\left((-n)^kf[n]\right) = \left(\frac{d}{dq}\right)^k F(q)$$
+            % \end{block}
+        %  \end{frame}
+    
+        %  \begin{frame}{Остальные свойства}
+            % \begin{block}{Свойство 7 - свёртка оригиналов}
+                $$ X(z)Y(z)=\sum_{k=0}^n x[k]y[n-k]= x[n] \ast y[n]$$
+            % \end{block}         
+            % \begin{block}{Свойство 8 - начальное значение}
+                $$ lim_{z \to 0} F(z)= lim_{z \to 0}\sum_{n=0}^{\infty}x[n]z^{-n}=x[0]$$
+            % \end{block}
+            % \begin{block}{Свойство 9 - начальное значение}
+                $$ lim_{z \to 1} F(z)= lim_{z \to 1}\sum_{n=0}^{\infty}x[n]z^{-n}=\lim_{n \to \infty}x[n]$$
+            % \end{block}         
+             
+        %  \end{frame}
+    
 
     \chapter{Преобразование $\bar{D}$ и $\bar{Z}$}
 
-    Для установления связи между непрерывным и дискретным преобразованием 
-    Лапласа
-    воспользуемся определением дискретной функции. Итак, пусть $x_T(t)$ - 
-    непрерывная функция. Выполним замену переменной и обозначим $t=\tau T$ и
-    обозначим $x(\tau)=x_T(T\tau)$. Пусть, кроме того, для непрерывной функции
-    $x(\tau)$ существует изображение по Лапласу:
+%     Для установления связи между непрерывным и дискретным преобразованием 
+%     Лапласа воспользуемся определением дискретной функции. Итак, пусть $x_T(t)$ - 
+%     непрерывная функция. Выполним замену переменной и обозначим $t=\tau T$ и
+%     обозначим $x(\tau)=x_T(T\tau)$. Пусть, кроме того, для непрерывной функции
+%     $x(\tau)$ существует изображение по Лапласу:
 
-    \begin{equation}[laplace_direct]
-        X(p)=L\{x(\tau)\} = \int_0^{\infty} e^{-p\tau}x(\tau) d\tau
-    \end{equation}
+%     \begin{equation}\label{laplace_direct}
+%         X(p)=L\{x(\tau)\} = \int_0^{\infty} e^{-p\tau}x(\tau) d\tau
+%     \end{equation}
      
-Перейдём к дискретной функции смещённого аргумента. Для этого, как было показано в ???,
-перейдём к переменным $n, \varepsilon$ так, что
+% Перейдём к дискретной функции смещённого аргумента. Для этого, как было показано в ???,
+% перейдём к переменным $n, \varepsilon$ так, что
 
-\begin{equation}[discrFunc]
-    x[n,\varepsilon]= x(\tau)|_{\tau=n+\varepsilon}, \quad 0\leq\varepsilon\le  1
-\end{equation}
-и запишем дискретное преобразование Лапласа:
-\begin{equation}\label{lapDiscrete}
-    X^*(q,\varepsilon)=\sum_{n=0}^{\infty} e^{-nq}x[n,\varepsilon]
-\end{equation}
+% \begin{equation}[discrFunc]
+%     x[n,\varepsilon]= x(\tau)|_{\tau=n+\varepsilon}, \quad 0\leq\varepsilon\le  1
+% \end{equation}
+% и запишем дискретное преобразование Лапласа:
+% \begin{equation}\label{lapDiscrete}
+%     X^*(q,\varepsilon)=\sum_{n=0}^{\infty} e^{-nq}x[n,\varepsilon]
+% \end{equation}
 
 \end{document}
